@@ -16,6 +16,7 @@ Sub SelectA1()
     Next
     
 End Sub
+
 Function GetBlankCell(TargetCell As Range)
 '指定シート内の空白セルを取得する
 '関数思い出し用
@@ -74,6 +75,7 @@ Sub SetCommentPicture(TargetCell As Range, PicturePath$)
     End With
     
 End Sub
+
 Sub ResetFilter(InputSheet As Worksheet)
 '指定シートのフィルタを解除する。
 'InputSheet0・・・実行対象シート。「オブジェクト」、「シート名」、「シート番号」どれで指定してもよい。未入力なら現在アクティブなシート。
@@ -85,6 +87,7 @@ Sub ResetFilter(InputSheet As Worksheet)
     If ActiveSheet.AutoFilterMode Then 'オートフィルタが設定されている場合
         For I = 1 To InputSheet.AutoFilter.Filters.Count '一つ一つの列を調査して
             If InputSheet.AutoFilter.Filters(I).On Then 'フィルタが設定されている場合
+                InputSheet.Select
                 Selection.AutoFilter Field:=I 'フィルタが設定されている列のフィルタ解除
                 
             End If
@@ -92,6 +95,7 @@ Sub ResetFilter(InputSheet As Worksheet)
     End If
 
 End Sub
+
 Function GetEndRow&(StartCell As Range, Optional MaxRenzokuBlank& = 0)
 'オートフィルタが設定してある場合も考慮しての最終行の取得
 '20210728
@@ -136,6 +140,7 @@ Function GetEndRow&(StartCell As Range, Optional MaxRenzokuBlank& = 0)
     GetEndRow = TmpEndRow '出力
 
 End Function
+
 Function GetEndCell(StartCell As Range, Optional MaxRenzokuBlank& = 0) As Range
 'オートフィルタが設定してある場合も考慮しての最終セルの取得
 '20210728
