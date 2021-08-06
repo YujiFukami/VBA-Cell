@@ -1,10 +1,6 @@
 Attribute VB_Name = "ModCell"
 Option Explicit
 
-Enum OrderType '昇順降順の列挙型
-    xlAscending = 1
-    xlDescending = 2
-End Enum
 
 Sub SelectA1()
 '全シートのA1セルを選択する
