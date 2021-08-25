@@ -19,11 +19,12 @@ Function GetBlankCell(TargetCell As Range)
 '20210720
     
     Dim Output As Range
-    Output = TargetCell.SpecialCells(xlCellTypeBlanks)
-
+    Set Output = TargetCell.SpecialCells(xlCellTypeBlanks)
+    Set GetBlankCell = Output
+    
 End Function
 
-Sub CellSort(TargetCell As Range, KeyCell As Range, Optional InputOrder As OrderType = xlAscending)
+Sub SortCell(TargetCell As Range, KeyCell As Range, Optional InputOrder As OrderType = xlAscending)
 '指定範囲のセルを並び替える
 '20210720
 
@@ -93,7 +94,7 @@ Sub ResetFilter(InputSheet As Worksheet)
 
 End Sub
 
-Function GetEndRow&(StartCell As Range, Optional MaxRenzokuBlank& = 0)
+Function GetEndRow&(StartCell As Range, Optional ByVal MaxRenzokuBlank& = 0)
 'オートフィルタが設定してある場合も考慮しての最終行の取得
 '20210728
 
@@ -107,7 +108,10 @@ Function GetEndRow&(StartCell As Range, Optional MaxRenzokuBlank& = 0)
     Dim TmpRenzokuBlank&, TmpEndRow&
     Dim TmpRow&
     Dim I&, J&, K&, M&, N& '数え上げ用(Long型)
-    If InputSheet.AutoFilterMode Then 'オートフィルタが設定されている場合
+    If InputSheet.AutoFilterMode Or MaxRenzokuBlank <> 0 Then 'オートフィルタが設定されている場合
+        If MaxRenzokuBlank = 0 Then
+            MaxRenzokuBlank = 500 '←←←←←←←←←←←←←←←←←←←←←←←
+        End If
         StartRow = StartCell.Row
         StartCol = StartCell.Column
         For TmpRow = StartRow To Rows.Count
@@ -198,4 +202,6 @@ Sub SetCellDataBar(TargetCell As Range, Ratio#, Color&)
     End With
 
 End Sub
+
+
 
