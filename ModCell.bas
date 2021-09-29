@@ -8,7 +8,7 @@ Sub SelectA1()
 
     Dim TmpSheet As Worksheet
     For Each TmpSheet In ActiveWorkbook.Sheets
-        Application.Goto TmpSheet.Range("A1")
+        Application.GoTo TmpSheet.Range("A1")
     Next
     
 End Sub
@@ -29,7 +29,7 @@ Sub SortCell(TargetCell As Range, KeyCell As Range, Optional InputOrder As Order
 '20210720
 
 'TargetCell・・・並び替え範囲のセル
-'KeyCell・・・並び替えのキーとなるセル
+'KeyCell   ・・・並び替えのキーとなるセル
 'InputOrder・・・昇順(xlAscending)か降順(xlDescending) デフォルトなら昇順
 
     Dim TargetSheet As Worksheet
@@ -203,5 +203,63 @@ Sub SetCellDataBar(TargetCell As Range, Ratio#, Color&)
 
 End Sub
 
+Sub Test_ShowColumns()
+
+    Dim TargetSheet As Worksheet
+    Dim ColumnABCList1D
+    ColumnABCList1D = Array("C", "E", "Z")
+    ColumnABCList1D = Application.Transpose(Application.Transpose(ColumnABCList1D))
+    Set TargetSheet = ActiveSheet
+    
+    Call ShowColumns(ColumnABCList1D, TargetSheet, "Z", True)
+
+End Sub
+
+Sub ShowColumns(ColumnABCList1D, TargetSheet As Worksheet, Optional ByVal MaxColABC$, Optional InputShow As Boolean = True)
+'指定列のみ表示にする
+'20210917
+
+'引数
+'ColumnABCList・・・非表示対象の列名の1次元配列 例) ("A","B","C")
+'TargetSheet  ・・・対象のシート
+'MaxColABC    ・・・非表示切替対象の列範囲の最大列
+'InputShow    ・・・指令列を表示ならTrue,非表示ならFalse。デフォルトはTrue
+                                                                 
+    '引数チェック
+    Call CheckArray1D(ColumnABCList1D, "ColumnABCList1D")
+    Call CheckArray1DStart1(ColumnABCList1D, "ColumnABCList1D")
+    
+    If MaxColABC = "" Then '非表示切替対象の列範囲の最大列が指定されていない場合はシートの最終列
+        MaxColABC = Split(Cells(1, Columns.Count).Address(True, False), "$")(0) '最終列番号のアルファベット取得
+    End If
+    
+    Dim I&, J&, K&, M&, N&      '数え上げ用(Long型)
+    Dim ColumnName$             '表示対象の列名をまとめたもの
+    N = UBound(ColumnABCList1D) '対象の列の個数
+    ColumnName = ""             '列名まとめの初期化
+    For I = 1 To N
+        ColumnName = ColumnName & ColumnABCList1D(I) & ":" & ColumnABCList1D(I)
+        If I < N Then '列名の最後だけ","をつけない
+            ColumnName = ColumnName & ","
+        End If
+    Next I
+    
+    Dim TargetCell As Range                        '対象範囲のセルオブジェクト
+    Set TargetCell = TargetSheet.Range(ColumnName) '対象範囲をセルオブジェクトで取得
+                                                                                    
+    Application.ScreenUpdating = False             '画面更新を解除して高速化
+    
+    If InputShow = True Then                                 '表示に切り替えるか、非表示に切り替えるか
+        TargetSheet.Columns("A:" & MaxColABC).Hidden = True  '全体を非表示
+        TargetCell.EntireColumn.Hidden = False               '指令列のみ表示する
+    Else
+        TargetSheet.Columns("A:" & MaxColABC).Hidden = False '全体を非表示
+        TargetCell.EntireColumn.Hidden = True                '指令列のみ表示する
+    End If
+    
+    ActiveWindow.ScrollColumn = 1     '一番左の列にスクロールして表示する
+    Application.ScreenUpdating = True '画面更新解除の解除
+    
+End Sub
 
 
