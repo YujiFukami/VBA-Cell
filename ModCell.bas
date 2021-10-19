@@ -51,7 +51,7 @@ Sub SortCell(TargetCell As Range, KeyCell As Range, Optional InputOrder As Order
     End With
 End Sub
 
-Sub SetCommentPicture(TargetCell As Range, PicturePath$)
+Sub SetCommentPicture(TargetCell As Range, PicturePath As String)
 'セルのコメントで画像を表示する
 '20210720
 
@@ -79,7 +79,7 @@ Sub ResetFilter(InputSheet As Worksheet)
 '参考→http://officetanaka.net/excel/vba/tips/tips129.htm
 '20210721
 
-    Dim I&
+    Dim I As Long
     
     InputSheet.Select
     If ActiveSheet.AutoFilterMode Then 'オートフィルタが設定されている場合
@@ -94,20 +94,20 @@ Sub ResetFilter(InputSheet As Worksheet)
 
 End Sub
 
-Function GetEndRow&(StartCell As Range, Optional ByVal MaxRenzokuBlank& = 0)
+Function GetEndRow(StartCell As Range, Optional ByVal MaxRenzokuBlank As Long = 0)
 'オートフィルタが設定してある場合も考慮しての最終行の取得
 '20210728
 
 'StartCell          :探索する基準の開始セル
 'MaxRenzokuBlank    :空白セルの連続個数(いくつ以上の空白セルが連続したら、最後の非空白セルが最終セル)
     
-    Dim InputSheet As Worksheet, OutputSheet As Worksheet '入出力シート
+    Dim InputSheet      As Worksheet
+    Dim StartRow        As Long
+    Dim StartCol        As Long
+    Dim TmpRenzokuBlank As Long
+    Dim TmpEndRow       As Long
+    Dim TmpRow          As Long
     Set InputSheet = StartCell.Parent
-    
-    Dim StartRow&, StartCol&
-    Dim TmpRenzokuBlank&, TmpEndRow&
-    Dim TmpRow&
-    Dim I&, J&, K&, M&, N& '数え上げ用(Long型)
     If InputSheet.AutoFilterMode Or MaxRenzokuBlank <> 0 Then 'オートフィルタが設定されている場合
         If MaxRenzokuBlank = 0 Then
             MaxRenzokuBlank = 500 '←←←←←←←←←←←←←←←←←←←←←←←
@@ -142,16 +142,16 @@ Function GetEndRow&(StartCell As Range, Optional ByVal MaxRenzokuBlank& = 0)
 
 End Function
 
-Function GetEndCell(StartCell As Range, Optional MaxRenzokuBlank& = 0) As Range
+Function GetEndCell(StartCell As Range, Optional MaxRenzokuBlank As Long = 0) As Range
 'オートフィルタが設定してある場合も考慮しての最終セルの取得
 '20210728
 
 'StartCell          :探索する基準の開始セル
 'MaxRenzokuBlank    :空白セルの連続個数(いくつ以上の空白セルが連続したら、最後の非空白セルが最終セル)
 
-    Dim EndRow&
+    Dim EndRow     As Long
+    Dim InputSheet As Worksheet
     EndRow = GetEndRow(StartCell, MaxRenzokuBlank)
-    Dim InputSheet As Worksheet, OutputSheet As Worksheet '入出力シート
     Set InputSheet = StartCell.Parent
     
     Dim Output As Range
@@ -160,7 +160,7 @@ Function GetEndCell(StartCell As Range, Optional MaxRenzokuBlank& = 0) As Range
     
 End Function
 
-Sub SetCellDataBar(TargetCell As Range, Ratio#, Color&)
+Sub SetCellDataBar(TargetCell As Range, Ratio As Double, Color As Long)
 'セルの書式設定で0～1の値に基づいて、データバーを設定する
 '20210820
 
@@ -168,16 +168,14 @@ Sub SetCellDataBar(TargetCell As Range, Ratio#, Color&)
 'Ratio      :割合（0～1）
 'Color      :バーの色（RGB値）
 
-    Dim Gosa#
+    Dim Gosa As Double
     Gosa = 10 ^ (-10) '←←←←←←←←←←←←←←←←←←←←←←←
     
     With TargetCell
-        
         .Interior.Pattern = xlPatternLinearGradient
         .Interior.Gradient.Degree = 0
         
         With .Interior.Gradient.ColorStops
-            
             If Ratio > Gosa Then
                 .Add(0).Color = Color
                 .Add(Gosa).Color = Color
@@ -205,7 +203,7 @@ End Sub
 
 Sub Test_ShowColumns()
 
-    Dim TargetSheet As Worksheet
+    Dim TargetSheet    As Worksheet
     Dim ColumnABCList1D
     ColumnABCList1D = Array("C", "E", "Z")
     ColumnABCList1D = Application.Transpose(Application.Transpose(ColumnABCList1D))
@@ -215,7 +213,7 @@ Sub Test_ShowColumns()
 
 End Sub
 
-Sub ShowColumns(ColumnABCList1D, TargetSheet As Worksheet, Optional ByVal MaxColABC$, Optional InputShow As Boolean = True)
+Sub ShowColumns(ColumnABCList1D, TargetSheet As Worksheet, Optional ByVal MaxColABC As String, Optional InputShow As Boolean = True)
 '指定列のみ表示にする
 '20210917
 
@@ -233,8 +231,9 @@ Sub ShowColumns(ColumnABCList1D, TargetSheet As Worksheet, Optional ByVal MaxCol
         MaxColABC = Split(Cells(1, Columns.Count).Address(True, False), "$")(0) '最終列番号のアルファベット取得
     End If
     
-    Dim I&, J&, K&, M&, N&      '数え上げ用(Long型)
-    Dim ColumnName$             '表示対象の列名をまとめたもの
+    Dim I          As Long
+    Dim N          As Long
+    Dim ColumnName As String    '表示対象の列名をまとめたもの
     N = UBound(ColumnABCList1D) '対象の列の個数
     ColumnName = ""             '列名まとめの初期化
     For I = 1 To N
