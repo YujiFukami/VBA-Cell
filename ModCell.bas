@@ -1,6 +1,27 @@
 Attribute VB_Name = "ModCell"
 Option Explicit
 
+'SelectA1          ・・・元場所：FukamiAddins3.ModCell 
+'GetBlankCell      ・・・元場所：FukamiAddins3.ModCell 
+'SortCell          ・・・元場所：FukamiAddins3.ModCell 
+'SetCommentPicture ・・・元場所：FukamiAddins3.ModCell 
+'ResetFilter       ・・・元場所：FukamiAddins3.ModCell 
+'GetEndRow         ・・・元場所：FukamiAddins3.ModCell 
+'GetEndCell        ・・・元場所：FukamiAddins3.ModCell 
+'SetCellDataBar    ・・・元場所：FukamiAddins3.ModCell 
+'Test_ShowColumns  ・・・元場所：FukamiAddins3.ModCell 
+'ShowColumns       ・・・元場所：FukamiAddins3.ModCell 
+'CheckArray1D      ・・・元場所：FukamiAddins3.ModArray
+'CheckArray1DStart1・・・元場所：FukamiAddins3.ModArray
+
+'宣言セクション※※※※※※※※※※※※※※※※※※※※※※※※※※※
+'-----------------------------------
+'元場所:FukamiAddins3.ModEnum.OrderType
+Public Enum OrderType '昇順降順の列挙型
+    xlAscending = 1
+    xlDescending = 2
+End Enum
+'宣言セクション終了※※※※※※※※※※※※※※※※※※※※※※※※※※※
 
 Sub SelectA1()
 '全シートのA1セルを選択する
@@ -259,6 +280,34 @@ Sub ShowColumns(ColumnABCList1D, TargetSheet As Worksheet, Optional ByVal MaxCol
     ActiveWindow.ScrollColumn = 1     '一番左の列にスクロールして表示する
     Application.ScreenUpdating = True '画面更新解除の解除
     
+End Sub
+
+Private Sub CheckArray1D(InputArray, Optional HairetuName As String = "配列")
+'入力配列が1次元配列かどうかチェックする
+'20210804
+
+    Dim Dummy As Integer
+    On Error Resume Next
+    Dummy = UBound(InputArray, 2)
+    On Error GoTo 0
+    If Dummy <> 0 Then
+        MsgBox (HairetuName & "は1次元配列を入力してください")
+        Stop
+        Exit Sub '入力元のプロシージャを確認するために抜ける
+    End If
+
+End Sub
+
+Private Sub CheckArray1DStart1(InputArray, Optional HairetuName As String = "配列")
+'入力1次元配列の開始番号が1かどうかチェックする
+'20210804
+
+    If LBound(InputArray, 1) <> 1 Then
+        MsgBox (HairetuName & "の開始要素番号は1にしてください")
+        Stop
+        Exit Sub '入力元のプロシージャを確認するために抜ける
+    End If
+
 End Sub
 
 
